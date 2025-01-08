@@ -17,6 +17,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { UserResponseDto } from './dto/response/user.response.dto';
+import { Log } from '../common/decorators/log.decorator';
+import { CacheCustom } from "../common/decorators/cache-method.decorator";
 
 @ApiTags('users')
 @Controller('user')
@@ -27,27 +29,33 @@ export class UserController {
   @ApiForbiddenResponse({ description: 'forbidden' })
   @ApiConflictResponse({ description: 'conflict' })
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  public async create(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<UserResponseDto> {
+    return await this.userService.create(createUserDto);
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  public async findAll(): Promise<string> {
+    return await this.userService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  @CacheCustom(5000)
+  public async findOne(@Param('id') id: string): Promise<string> {
+    return await this.userService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  public async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<string> {
+    return await this.userService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  public async remove(@Param('id') id: string): Promise<string> {
+    return await this.userService.remove(+id);
   }
 }
