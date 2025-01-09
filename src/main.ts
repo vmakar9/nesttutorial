@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { SwaggerHelper } from './common/helpers/swagger.helper';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -26,6 +27,13 @@ async function bootstrap() {
       persistAuthorization: true,
     },
   });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      forbidNonWhitelisted: true,
+      whitelist: true,
+    }),
+  );
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

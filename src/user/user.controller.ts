@@ -7,18 +7,19 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/request/create-user.dto';
-import { UpdateUserDto } from './dto/request/update-user.dto';
+import { UserService } from './services/user.service';
+
 import {
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UserResponseDto } from './dto/response/user.response.dto';
-import { Log } from '../common/decorators/log.decorator';
-import { CacheCustom } from "../common/decorators/cache-method.decorator";
+
+import { CacheCustom } from '../common/decorators/cache-method.decorator';
+import { UserResponseDto } from './models/dto/response/user.response.dto';
+import { CreateUserDto } from './models/dto/request/create-user.dto';
+import { UpdateUserDto } from './models/dto/request/update-user.dto';
 
 @ApiTags('users')
 @Controller('user')

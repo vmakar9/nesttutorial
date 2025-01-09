@@ -28,13 +28,14 @@ export class SwaggerHelper {
         const route = document.paths[key]?.[method];
         if (route) {
           Object.assign(route.responses, generalResponses);
-        }
-        if (route.security) {
-          Object.assign(route.responses, authResponses);
-        }
-        if (method === 'delete') {
-          delete route.responses[200];
-          Object.assign(route.responses, deleteResponses);
+
+          if (route.security) {
+            Object.assign(route.responses, authResponses);
+          }
+          if (method === 'delete') {
+            delete route.responses[200];
+            Object.assign(route.responses, deleteResponses);
+          }
         }
       }
     }
