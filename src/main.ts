@@ -6,6 +6,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './modules/app.module';
 import { AppConfig, Config } from './config/config.type';
+import { GlobalExceptionFilter } from './common/exeptions/global-exeptions';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -30,6 +31,8 @@ async function bootstrap() {
       persistAuthorization: true,
     },
   });
+  app.useGlobalFilters(new GlobalExceptionFilter());
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
