@@ -40,6 +40,7 @@
     "cross-var": "^1.1.0",
     "docker-compose": "^1.1.0",
     "dotenv": "^16.4.7",
+    "ioredis": "^5.4.2",
     "npm-check-updates": "^17.1.13",
     "pg": "^8.13.1",
     "reflect-metadata": "^0.2.0",
