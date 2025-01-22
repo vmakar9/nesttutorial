@@ -24,6 +24,9 @@ export class UserEntity extends BaseEntity {
   @Column('text', { select: false })
   bio: string;
 
+  @Column('text', { nullable: true })
+  image?: string;
+
   @OneToMany(() => ArticleEntity, (entity) => entity.user)
   articles?: ArticleEntity[];
 

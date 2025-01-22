@@ -1,6 +1,6 @@
 import { DataSource, Repository } from 'typeorm';
 import { UserEntity } from '../../../database/entities/user.entity';
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class UserRepository extends Repository<UserEntity> {
@@ -8,7 +8,10 @@ export class UserRepository extends Repository<UserEntity> {
     super(UserEntity, dataSource.manager);
   }
 
-  public async getAll() {
-    return await this.find();
+  public async isEmailUniqueOrThrow(email: string): Promise<void> {
+    const user = await this.findOneBy({ email });
+    if (user) {
+      throw new ConflictException();
+    }
   }
 }
