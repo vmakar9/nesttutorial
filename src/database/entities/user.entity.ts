@@ -21,8 +21,8 @@ export class UserEntity extends BaseEntity {
   @Column('int', { nullable: true })
   age: number;
 
-  @Column('text', { select: false })
-  bio: string;
+  @Column('text', { nullable: true })
+  bio?: string;
 
   @Column('text', { nullable: true })
   image?: string;
