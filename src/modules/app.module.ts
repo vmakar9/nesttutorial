@@ -7,6 +7,7 @@ import { PostgresModule } from './postgres/postgres.module';
 import { RepositoryModule } from './repository/repository.module';
 import { RedisModule } from './redis/redis.module';
 import { AuthModule } from './auth/auth.module';
+import { ArticleModule } from './article/article.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     AuthModule,
     UserModule,
+    ArticleModule,
     HealthModule,
     RepositoryModule,
     RedisModule,

@@ -7,8 +7,4 @@ export class ArticleRepository extends Repository<ArticleEntity> {
   constructor(private readonly dataSource: DataSource) {
     super(ArticleEntity, dataSource.manager);
   }
-
-  public async getAll() {
-    return await this.find();
-  }
 }

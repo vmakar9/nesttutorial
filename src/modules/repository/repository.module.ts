@@ -5,6 +5,7 @@ import { TagRepository } from './services/tag.repository';
 import { CommentRepository } from './services/comment.repository';
 import { LikeRepository } from './services/like.repository';
 import { RefreshTokenRepository } from './services/refresh-token.repository';
+import { FollowRepository } from './services/follow.repository';
 
 const repositories = [
   UserRepository,
@@ -13,6 +14,7 @@ const repositories = [
   CommentRepository,
   LikeRepository,
   RefreshTokenRepository,
+  FollowRepository,
 ];
 
 @Global()
