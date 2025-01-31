@@ -1,5 +1,10 @@
 import { ArticleRepository } from '../../repository/services/article.repository';
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 
 import { ArticleResponseDto } from '../models/dto/response/article.response.dto';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
@@ -8,17 +13,25 @@ import { ArticleMapper } from './article.mapper';
 import { ArticleEntity } from '../../../database/entities/article.entity';
 import { EditArticleRequestDto } from '../models/dto/request/edit-article.request.dto';
 import { ArticleListRequestDto } from '../models/dto/request/article-list.request.dto';
+import { ArticleListResponseDto } from '../models/dto/response/article-list.response.dto';
+import { LikeRepository } from '../../repository/services/like.repository';
 @Injectable()
 export class ArticleService {
-  constructor(private readonly articleRepository: ArticleRepository) {}
+  constructor(
+    private readonly likeRepository: LikeRepository,
+    private readonly articleRepository: ArticleRepository,
+  ) {}
 
-  public async getList(query: ArticleListRequestDto): Promise<any> {
-    const qb = this.articleRepository.createQueryBuilder('article');
-    qb.addOrderBy('article.created', 'DESC');
-    qb.take(10);
-    qb.skip(0);
-    const [entities, total] = await qb.getManyAndCount();
-    return { entities, total };
+  public async getList(
+    query: ArticleListRequestDto,
+    userData: IUserData,
+  ): Promise<ArticleListResponseDto> {
+    const [entities, total] = await this.articleRepository.getList(
+      query,
+      userData,
+    );
+
+    return ArticleMapper.toListResponseDto(entities, total, query);
   }
 
   public async create(
@@ -31,11 +44,14 @@ export class ArticleService {
     return ArticleMapper.toResponseDto(article);
   }
 
-  public async getArticleById(articleId: string): Promise<ArticleResponseDto> {
-    const article = await this.articleRepository.findOne({
-      where: { id: articleId },
-      relations: { user: true },
-    });
+  public async getArticleById(
+    articleId: string,
+    userData: IUserData,
+  ): Promise<ArticleResponseDto> {
+    const article = await this.articleRepository.getArticleById(
+      articleId,
+      userData,
+    );
     if (!article) {
       throw new UnprocessableEntityException();
     }
@@ -74,5 +90,40 @@ export class ArticleService {
       throw new UnprocessableEntityException();
     }
     return article;
+  }
+
+  public async like(articleId: string, userData: IUserData): Promise<void> {
+    const article = await this.articleRepository.findOneBy({ id: articleId });
+    if (article.user_id === userData.userId) {
+      throw new ForbiddenException('You cant like your article');
+    }
+    const like = await this.likeRepository.findOneBy({
+      user_id: userData.userId,
+      article_id: article.id,
+    });
+    if (like) {
+      throw new ForbiddenException('You already like this article');
+    }
+
+    await this.likeRepository.save(
+      this.likeRepository.create({
+        user_id: userData.userId,
+        article_id: articleId,
+      }),
+    );
+  }
+
+  public async dislike(articleId: string, userData: IUserData): Promise<void> {
+    const article = await this.articleRepository.findOneBy({ id: articleId });
+
+    const like = await this.likeRepository.findOneBy({
+      user_id: userData.userId,
+      article_id: article.id,
+    });
+    if (!like) {
+      throw new ConflictException('You cant dislike this article');
+    }
+
+    await this.likeRepository.remove(like);
   }
 }
