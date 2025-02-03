@@ -15,11 +15,16 @@ import { EditArticleRequestDto } from '../models/dto/request/edit-article.reques
 import { ArticleListRequestDto } from '../models/dto/request/article-list.request.dto';
 import { ArticleListResponseDto } from '../models/dto/response/article-list.response.dto';
 import { LikeRepository } from '../../repository/services/like.repository';
+import { TagEntity } from 'src/database/entities/tag.entity';
+import { TagRepository } from '../../repository/services/tag.repository';
+import { In } from 'typeorm';
+
 @Injectable()
 export class ArticleService {
   constructor(
     private readonly likeRepository: LikeRepository,
     private readonly articleRepository: ArticleRepository,
+    private readonly tagRepository: TagRepository,
   ) {}
 
   public async getList(
@@ -38,8 +43,13 @@ export class ArticleService {
     dto: CreateArticleRequestDto,
     userData: IUserData,
   ): Promise<ArticleResponseDto> {
+    const tags = await this.createTagsForArticle(dto.tags);
     const article = await this.articleRepository.save(
-      this.articleRepository.create({ ...dto, user_id: userData.userId }),
+      this.articleRepository.create({
+        ...dto,
+        user_id: userData.userId,
+        tags: tags,
+      }),
     );
     return ArticleMapper.toResponseDto(article);
   }
@@ -125,5 +135,19 @@ export class ArticleService {
     }
 
     await this.likeRepository.remove(like);
+  }
+
+  public async createTagsForArticle(tags: string[]): Promise<TagEntity[]> {
+    if (!tags.length) return [];
+    const tagEntities = await this.tagRepository.findBy({
+      name: In(tags),
+    });
+    const tagNamesFromDB = new Set(tagEntities.map(({ name }) => name));
+    const newTagNames = tags.filter((tag) => !tagNamesFromDB.has(tag));
+
+    const newEnities = await this.tagRepository.save(
+      newTagNames.map((name) => this.tagRepository.create({ name })),
+    );
+    return [...tagEntities, ...newEnities];
   }
 }

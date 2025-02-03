@@ -8,6 +8,7 @@ import { RepositoryModule } from './repository/repository.module';
 import { RedisModule } from './redis/redis.module';
 import { AuthModule } from './auth/auth.module';
 import { ArticleModule } from './article/article.module';
+import { TagModule } from './tag/tag.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ArticleModule } from './article/article.module';
     AuthModule,
     UserModule,
     ArticleModule,
+    TagModule,
     HealthModule,
     RepositoryModule,
     RedisModule,

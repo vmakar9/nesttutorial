@@ -8,7 +8,13 @@ export class TagRepository extends Repository<TagEntity> {
     super(TagEntity, dataSource.manager);
   }
 
-  public async getAll() {
-    return await this.find();
+  public async getPopular(): Promise<TagEntity[]> {
+    const qb = this.createQueryBuilder('tag');
+    qb.leftJoin('tag.articles', 'article');
+    qb.addSelect('COUNT(article.id)', 'tag_articleCount');
+    qb.groupBy('tag.id');
+    qb.orderBy('"tag_articlesCount"', 'DESC');
+    qb.limit(10);
+    return await qb.getMany();
   }
 }

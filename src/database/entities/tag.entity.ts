@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany } from 'typeorm';
+import { Column, Entity, ManyToMany, VirtualColumn } from 'typeorm';
 import { BaseEntity } from './models/base.entity';
 import { ArticleEntity } from './article.entity';
 import { TableNameEnum } from './enums/table.enum';
@@ -10,4 +10,7 @@ export class TagEntity extends BaseEntity {
 
   @ManyToMany(() => ArticleEntity, (entity) => entity.tags)
   articles?: ArticleEntity[];
+
+  @VirtualColumn({ query: () => 'NULL' })
+  articlesCount: number;
 }

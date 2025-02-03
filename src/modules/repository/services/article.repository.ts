@@ -17,11 +17,23 @@ export class ArticleRepository extends Repository<ArticleEntity> {
     const qb = this.createQueryBuilder('article');
     qb.leftJoinAndSelect('article.likes', 'like', 'like.user_id = :myId');
     qb.leftJoinAndSelect('article.user', 'user');
+    qb.leftJoinAndSelect('article.tags', 'tag');
     qb.leftJoinAndSelect(
       'user.followings',
       'follow',
       'follow.following_id = :myId',
     );
+    if (query.tag) {
+      qb.andWhere('tag.name = :tag');
+      qb.setParameter('tag', query.tag);
+    }
+    if (query.search) {
+      qb.andWhere(
+        'CONCAT(LOWER(article.title), LOWER(article.description)) LIKE :search',
+      );
+      qb.setParameter('search', `%${query.search}%`);
+    }
+
     qb.setParameter('myId', userData.userId);
     qb.addOrderBy('article.created', 'DESC');
     qb.take(query.limit);
@@ -34,7 +46,9 @@ export class ArticleRepository extends Repository<ArticleEntity> {
     userData: IUserData,
   ): Promise<ArticleEntity> {
     const qb = this.createQueryBuilder('article');
+    qb.leftJoinAndSelect('article.likes', 'like', 'like.user_id = :myId');
     qb.leftJoinAndSelect('article.user', 'user');
+    qb.leftJoinAndSelect('article.tags', 'tag');
     qb.leftJoinAndSelect(
       'user.followings',
       'follow',

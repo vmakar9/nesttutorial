@@ -1,4 +1,4 @@
-import { IsString, Length } from 'class-validator';
+import { ArrayMaxSize, IsArray, IsString, Length } from "class-validator";
 import { Transform, Type } from 'class-transformer';
 import { TransformHelper } from '../../../../../common/helpers/transform.helper';
 
@@ -20,4 +20,13 @@ export class BaseArticleRequestDto {
   @Transform(TransformHelper.trim)
   @Type(() => String)
   body: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @Length(3, 30, { each: true })
+  @ArrayMaxSize(5)
+  @Transform(TransformHelper.trimArray)
+  @Transform(TransformHelper.uniqueItems)
+  @Type(() => String)
+  tags: string[];
 }
