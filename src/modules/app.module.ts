@@ -9,6 +9,7 @@ import { RedisModule } from './redis/redis.module';
 import { AuthModule } from './auth/auth.module';
 import { ArticleModule } from './article/article.module';
 import { TagModule } from './tag/tag.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TagModule } from './tag/tag.module';
     HealthModule,
     RepositoryModule,
     RedisModule,
+    MailModule,
   ],
   controllers: [],
   providers: [],

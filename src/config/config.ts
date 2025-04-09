@@ -26,4 +26,11 @@ export default (): Config => ({
     refreshTokenExpiration:
       parseInt(process.env.AUTH_REFRESH_TOKEN_EXPIRATION) || 86400,
   },
+  mail: {
+    mailHost: process.env.MAIL_HOST,
+    mailPort: parseInt(process.env.MAIL_PORT),
+    mailUser: process.env.MAIL_USER,
+    mailPassword: process.env.MAIL_PASSWORD,
+    mailFrom: process.env.MAIL_FROM,
+  },
 });

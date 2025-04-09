@@ -3,6 +3,7 @@ export type Config = {
   postgres: PostgresConfig;
   redis: RedisConfig;
   jwt: JWTConfig;
+  mail: MailConfig;
 };
 
 export type AppConfig = {
@@ -28,4 +29,12 @@ export type JWTConfig = {
   accessTokenExpiration: number;
   refreshTokenSecret: string;
   refreshTokenExpiration: number;
+};
+
+export type MailConfig = {
+  mailHost: string;
+  mailPort: number;
+  mailUser: string;
+  mailPassword: string;
+  mailFrom: string;
 };

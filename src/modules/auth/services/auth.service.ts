@@ -10,6 +10,7 @@ import { AuthMapper } from './auth.mapper';
 import { SignInRequestDto } from '../dto/request/siqn-in.request.dto';
 import { IUserData } from '../interfaces/user-data.interface';
 import { TokenResponseDto } from '../dto/response/token.response.dto';
+import { MailService } from '../../mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,7 @@ export class AuthService {
     private readonly authCacheService: AuthCacheService,
     private readonly userRepository: UserRepository,
     private readonly refreshRepository: RefreshTokenRepository,
+    private readonly mailService: MailService,
   ) {}
 
   public async signUp(dto: SignUpRequestDto): Promise<AuthUserResponseDto> {
@@ -45,6 +47,7 @@ export class AuthService {
         dto.deviceId,
         tokens.accessToken,
       ),
+      this.mailService.sendWelcomeEmail(dto.email),
     ]);
 
     return AuthMapper.toResponseDto(user, tokens);

@@ -7,10 +7,11 @@ import { JwtAccessGuard } from './guards/jwt-access.guard';
 import { AuthService } from './services/auth.service';
 import { AuthCacheService } from './services/auth-cache.service';
 import { TokenService } from './services/token.service';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   controllers: [AuthController],
-  imports: [JwtModule, RedisModule],
+  imports: [JwtModule, RedisModule, MailModule],
   providers: [
     {
       provide: APP_GUARD,

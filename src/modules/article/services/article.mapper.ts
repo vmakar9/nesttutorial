@@ -3,7 +3,7 @@ import { ArticleResponseDto } from '../models/dto/response/article.response.dto'
 import { UserMapper } from '../../../user/services/user.mapper';
 import { ArticleListResponseDto } from '../models/dto/response/article-list.response.dto';
 import { ArticleListRequestDto } from '../models/dto/request/article-list.request.dto';
-import { TagMapper } from "../../tag/services/tag.mapper";
+import { TagMapper } from '../../tag/services/tag.mapper';
 
 export class ArticleMapper {
   public static toResponseDto(

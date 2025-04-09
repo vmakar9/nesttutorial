@@ -91,4 +91,8 @@ export class UserService {
   public async remove(id: number): Promise<string> {
     return `This action removes a #${id} user`;
   }
+
+  public async findByEmail(email: string): Promise<UserEntity> {
+    return await this.userRepository.findOne({ where: { email } });
+  }
 }

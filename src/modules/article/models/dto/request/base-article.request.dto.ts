@@ -1,4 +1,4 @@
-import { ArrayMaxSize, IsArray, IsString, Length } from "class-validator";
+import { ArrayMaxSize, IsArray, IsString, Length } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { TransformHelper } from '../../../../../common/helpers/transform.helper';
 
