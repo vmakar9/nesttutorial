@@ -21,57 +21,17 @@
     .content {
       padding: 20px 0;
     }
-    .footer {
-      text-align: center;
-      font-size: 12px;
-      color: #888;
-      border-top: 1px solid #eee;
-      padding-top: 20px;
-    }
-    .button {
-      display: inline-block;
-      background-color: #4CAF50;
-      color: white;
-      text-decoration: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      margin: 20px 0;
-    }
   </style>
 </head>
 <body>
 <div class="header">
   <h1>Ласкаво просимо!</h1>
 </div>
-
 <div class="content">
-  <p>Вітаємо, {{name}}!</p>
-
-  <p>Дякуємо за реєстрацію в нашому сервісі. Ми раді, що ви з нами!</p>
-
-  <p>Ось деякі корисні посилання для початку роботи:</p>
-
-  <ul>
-    <li><a href="#">Ваш особистий кабінет</a></li>
-    <li><a href="#">Наші послуги</a></li>
-    <li><a href="#">Поширені запитання</a></li>
-  </ul>
-
-  <div style="text-align: center;">
-    <a href="#" class="button">Перейти до особистого кабінету</a>
-  </div>
-
-  <p>Якщо у вас виникнуть запитання, будь ласка, зв'яжіться з нашою службою підтримки.</p>
-
-  <p>З повагою,<br>Команда сервісу</p>
-</div>
-
-<div class="footer">
-  <p>&copy; {{year}} Наш сервіс. Всі права захищені.</p>
-  <p>
-    <a href="#">Політика конфіденційності</a> |
-    <a href="#">Умови використання</a>
-  </p>
+  <h1>Ласкаво просимо, {{name}}!</h1>
+  <p>Будь ласка, активуйте свій акаунт, натиснувши на посилання нижче:</p>
+  <p><a href="{{activationLink}}">Активувати акаунт</a></p>
+  <p>&copy; {{year}}</p>
 </div>
 </body>
 </html>

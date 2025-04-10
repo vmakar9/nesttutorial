@@ -23,7 +23,10 @@ export class MailService {
     });
   }
 
-  public async sendWelcomeEmail(email: string): Promise<void> {
+  public async sendWelcomeEmail(
+    email: string,
+    activationToken: string,
+  ): Promise<void> {
     const templatePath = path.join(
       process.cwd(),
       'src',
@@ -35,9 +38,12 @@ export class MailService {
     const templateSource = fs.readFileSync(templatePath, 'utf-8');
     const template = handlebars.compile(templateSource);
 
+    const activationLink = `${this.mailConfig.mailUrl}/auth/activate/${activationToken}`;
+
     const html = template({
       name: email,
       year: new Date().getFullYear(),
+      activationLink,
     });
 
     await this.transporter.sendMail({

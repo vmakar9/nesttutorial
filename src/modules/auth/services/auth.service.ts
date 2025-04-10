@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { TokenService } from './token.service';
 import { AuthCacheService } from './auth-cache.service';
 import { UserRepository } from '../../repository/services/user.repository';
@@ -11,6 +15,8 @@ import { SignInRequestDto } from '../dto/request/siqn-in.request.dto';
 import { IUserData } from '../interfaces/user-data.interface';
 import { TokenResponseDto } from '../dto/response/token.response.dto';
 import { MailService } from '../../mail/mail.service';
+import { UserStatusEnum } from '../../../database/entities/enums/user.status.enum';
+import { ActionTokenType } from '../enums/action-token-type.enum';
 
 @Injectable()
 export class AuthService {
@@ -36,6 +42,10 @@ export class AuthService {
       deviceId: dto.deviceId,
     });
 
+    const activationToken = await this.tokenService.generateActivateToken({
+      userId: user.id,
+    });
+
     await Promise.all([
       this.refreshRepository.saveToken(
         user.id,
@@ -47,7 +57,7 @@ export class AuthService {
         dto.deviceId,
         tokens.accessToken,
       ),
-      this.mailService.sendWelcomeEmail(dto.email),
+      this.mailService.sendWelcomeEmail(dto.email, activationToken),
     ]);
 
     return AuthMapper.toResponseDto(user, tokens);
@@ -143,5 +153,23 @@ export class AuthService {
       ),
     ]);
     return tokens;
+  }
+
+  public async activateAccount(token: string): Promise<void> {
+    const payload = await this.tokenService.verifyActionToken(
+      token,
+      ActionTokenType.ACTIVATION,
+    );
+    await this.activateUser(payload.userId);
+  }
+
+  public async activateUser(userId: string): Promise<void> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (user.status === UserStatusEnum.ACTIVE) {
+      throw new BadRequestException('User is already registered');
+    }
+
+    user.status = UserStatusEnum.ACTIVE;
+    await this.userRepository.save(user);
   }
 }

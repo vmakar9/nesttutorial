@@ -5,6 +5,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtPayload } from '../types/jwt-payload.type';
 import { TokenResponseDto } from '../dto/response/token.response.dto';
 import { TokenType } from '../enums/token-type.enum';
+import { JwtPayloadActivation } from '../types/jwt-payload.activation.type';
+import { ActionTokenType } from '../enums/action-token-type.enum';
 
 @Injectable()
 export class TokenService {
@@ -45,6 +47,12 @@ export class TokenService {
     }
   }
 
+  public async generateActivateToken(
+    payload: JwtPayloadActivation,
+  ): Promise<string> {
+    return await this.generateActionToken(payload, ActionTokenType.ACTIVATION);
+  }
+
   private async generateToken(
     payload: JwtPayload,
     type: TokenType,
@@ -53,6 +61,30 @@ export class TokenService {
     const expiresIn = this.getExpiresIn(type);
 
     return await this.jwtService.signAsync(payload, { expiresIn, secret });
+  }
+
+  public async generateActionToken(
+    payload: JwtPayloadActivation,
+    type: ActionTokenType,
+  ): Promise<string> {
+    const secret = this.getActionSecret(type);
+    const expiresIn = this.getActionExpiresIn(type);
+
+    return await this.jwtService.signAsync(payload, { expiresIn, secret });
+  }
+
+  public async verifyActionToken(
+    token: string,
+    type: ActionTokenType,
+  ): Promise<JwtPayloadActivation> {
+    try {
+      const secret = this.getActionSecret(type);
+
+      return this.jwtService.verifyAsync(token, { secret });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      throw new UnauthorizedException();
+    }
   }
 
   private getSecret(type: TokenType): string {
@@ -70,6 +102,20 @@ export class TokenService {
         return this.jwtConfig.accessTokenExpiration;
       case TokenType.REFRESH:
         return this.jwtConfig.refreshTokenExpiration;
+    }
+  }
+
+  private getActionSecret(type: ActionTokenType): string {
+    switch (type) {
+      case ActionTokenType.ACTIVATION:
+        return this.jwtConfig.activationTokenSecret;
+    }
+  }
+
+  private getActionExpiresIn(type: ActionTokenType): number {
+    switch (type) {
+      case ActionTokenType.ACTIVATION:
+        return this.jwtConfig.activationTokenExpiration;
     }
   }
 }

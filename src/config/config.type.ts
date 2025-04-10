@@ -29,6 +29,8 @@ export type JWTConfig = {
   accessTokenExpiration: number;
   refreshTokenSecret: string;
   refreshTokenExpiration: number;
+  activationTokenSecret: string;
+  activationTokenExpiration: number;
 };
 
 export type MailConfig = {
@@ -37,4 +39,5 @@ export type MailConfig = {
   mailUser: string;
   mailPassword: string;
   mailFrom: string;
+  mailUrl: string;
 };

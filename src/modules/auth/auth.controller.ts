@@ -1,5 +1,12 @@
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './services/auth.service';
 import { SkipAuth } from './decorators/skip-auth.decorator';
 import { SignUpRequestDto } from './dto/request/siqn-up.request.dto';
@@ -49,5 +56,11 @@ export class AuthController {
     @CurrentUser() userData: IUserData,
   ): Promise<TokenResponseDto> {
     return await this.authService.refreshToken(userData);
+  }
+
+  @SkipAuth()
+  @Patch('activate/:token')
+  public async activateAccount(@Param('token') token: string): Promise<void> {
+    await this.authService.activateAccount(token);
   }
 }

@@ -6,6 +6,7 @@ import { LikeEntity } from './like.entity';
 import { CommentEntity } from './comment.entity';
 import { FollowEntity } from './follow.entity';
 import { TableNameEnum } from './enums/table.enum';
+import { UserStatusEnum } from './enums/user.status.enum';
 
 @Entity(TableNameEnum.USERS)
 export class UserEntity extends BaseEntity {
@@ -26,6 +27,13 @@ export class UserEntity extends BaseEntity {
 
   @Column('text', { nullable: true })
   image?: string;
+
+  @Column({
+    type: 'enum',
+    enum: UserStatusEnum,
+    default: UserStatusEnum.INACTIVE,
+  })
+  status: UserStatusEnum;
 
   @OneToMany(() => ArticleEntity, (entity) => entity.user)
   articles?: ArticleEntity[];

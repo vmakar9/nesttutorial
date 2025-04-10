@@ -25,6 +25,10 @@ export default (): Config => ({
       process.env.AUTH_REFRESH_TOKEN_SECRET || 'refresh secret',
     refreshTokenExpiration:
       parseInt(process.env.AUTH_REFRESH_TOKEN_EXPIRATION) || 86400,
+    activationTokenSecret:
+      process.env.AUTH_ACTIVATION_TOKEN_SECRET || 'activation secret',
+    activationTokenExpiration:
+      parseInt(process.env.AUTH_ACTIVATION_TOKEN_EXPIRATION) || 86400,
   },
   mail: {
     mailHost: process.env.MAIL_HOST,
@@ -32,5 +36,6 @@ export default (): Config => ({
     mailUser: process.env.MAIL_USER,
     mailPassword: process.env.MAIL_PASSWORD,
     mailFrom: process.env.MAIL_FROM,
+    mailUrl: process.env.MAIL_URL,
   },
 });
