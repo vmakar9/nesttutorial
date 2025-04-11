@@ -57,7 +57,8 @@ export class AuthService {
         dto.deviceId,
         tokens.accessToken,
       ),
-      this.mailService.sendWelcomeEmail(dto.email, activationToken),
+      this.authCacheService.saveActivateToken(user.id, activationToken),
+      this.mailService.sendWelcomeEmail(dto.email, dto.name, activationToken),
     ]);
 
     return AuthMapper.toResponseDto(user, tokens);

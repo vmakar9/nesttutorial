@@ -25,6 +25,7 @@ export class MailService {
 
   public async sendWelcomeEmail(
     email: string,
+    name: string,
     activationToken: string,
   ): Promise<void> {
     const templatePath = path.join(
@@ -41,7 +42,7 @@ export class MailService {
     const activationLink = `${this.mailConfig.mailUrl}/auth/activate/${activationToken}`;
 
     const html = template({
-      name: email,
+      name: name,
       year: new Date().getFullYear(),
       activationLink,
     });

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { RedisService } from '../../redis/redis.service';
-import { AUTH_CACHE } from '../constants/constants';
+import { ACTIVATE_CACHE, AUTH_CACHE } from '../constants/constants';
 
 import { Config, JWTConfig } from '../../../config/config.type';
 
@@ -44,5 +44,19 @@ export class AuthCacheService {
       `${AUTH_CACHE.ACCESS_TOKEN}:${userId}:${deviceId}`,
     );
     return userAccessTokens.some((token: string) => token === accessToken);
+  }
+
+  public async saveActivateToken(
+    userId: string,
+    activateToken: string,
+  ): Promise<void> {
+    const key = `${ACTIVATE_CACHE.ACTIVATE_TOKEN}:${userId}`;
+
+    await this.redisService.deleteByKey(key);
+    await this.redisService.addOneToSet(key, activateToken);
+    await this.redisService.expire(
+      key,
+      this.jwtConfig.activationTokenExpiration,
+    );
   }
 }
