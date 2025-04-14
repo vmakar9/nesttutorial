@@ -173,4 +173,26 @@ export class AuthService {
     user.status = UserStatusEnum.ACTIVE;
     await this.userRepository.save(user);
   }
+
+  public async changePassword(
+    userId: string,
+    oldPassword: string,
+    newPassword: string,
+  ): Promise<void> {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .addSelect('user.password')
+      .where('user.id = :id', { id: userId })
+      .getOne();
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) throw new BadRequestException('Old Password is incorrect');
+
+    const hashedNew = await bcrypt.hash(newPassword, 10);
+    user.password = hashedNew;
+    await this.userRepository.save(user);
+  }
 }

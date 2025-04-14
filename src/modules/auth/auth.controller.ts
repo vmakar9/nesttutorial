@@ -16,6 +16,8 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { IUserData } from './interfaces/user-data.interface';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { TokenResponseDto } from './dto/response/token.response.dto';
+import { JwtAccessGuard } from './guards/jwt-access.guard';
+import { ChangePasswordRegusetDto } from './dto/request/change-password.reguset.dto';
 
 @ApiTags('Auth')
 @Controller({ path: 'auth', version: '1' })
@@ -62,5 +64,19 @@ export class AuthController {
   @Patch('activate/:token')
   public async activateAccount(@Param('token') token: string): Promise<void> {
     await this.authService.activateAccount(token);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessGuard)
+  @Patch('changePassword')
+  public async changePassword(
+    @CurrentUser() userData: IUserData,
+    @Body() dto: ChangePasswordRegusetDto,
+  ): Promise<void> {
+    await this.authService.changePassword(
+      userData.userId,
+      dto.oldPassword,
+      dto.newPassword,
+    );
   }
 }
