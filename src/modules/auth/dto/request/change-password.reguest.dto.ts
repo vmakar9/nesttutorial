@@ -1,6 +1,6 @@
 import { IsString, MinLength } from 'class-validator';
 
-export class ChangePasswordRegusetDto {
+export class ChangePasswordReguestDto {
   @IsString()
   oldPassword: string;
 

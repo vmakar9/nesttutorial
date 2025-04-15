@@ -31,6 +31,8 @@ export type JWTConfig = {
   refreshTokenExpiration: number;
   activationTokenSecret: string;
   activationTokenExpiration: number;
+  forgotTokenSecret: string;
+  forgotTokenExpiration: number;
 };
 
 export type MailConfig = {

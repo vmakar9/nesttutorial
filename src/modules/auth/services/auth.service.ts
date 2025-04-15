@@ -195,4 +195,41 @@ export class AuthService {
     user.password = hashedNew;
     await this.userRepository.save(user);
   }
+
+  public async sendForgotEmail(email: string): Promise<void> {
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new BadRequestException('Email is not exist');
+    }
+
+    const forgotToken = await this.tokenService.generateForgotToken({
+      userId: user.id,
+    });
+
+    await this.mailService.sendForgotEmail(email, user.name, forgotToken);
+  }
+
+  public async changeForgotPassword(
+    token: string,
+    newPassword: string,
+  ): Promise<void> {
+    const payload = await this.tokenService.verifyActionToken(
+      token,
+      ActionTokenType.FORGOT,
+    );
+
+    const { userId } = payload;
+
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .addSelect('user.password')
+      .where('user.id = :id', { id: userId })
+      .getOne();
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await this.userRepository.save(user);
+  }
 }

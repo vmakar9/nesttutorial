@@ -7,6 +7,7 @@ import { TokenResponseDto } from '../dto/response/token.response.dto';
 import { TokenType } from '../enums/token-type.enum';
 import { JwtPayloadActivation } from '../types/jwt-payload.activation.type';
 import { ActionTokenType } from '../enums/action-token-type.enum';
+import { JwtPayloadForgotType } from '../types/jwt-payload.forgot.type';
 
 @Injectable()
 export class TokenService {
@@ -51,6 +52,12 @@ export class TokenService {
     payload: JwtPayloadActivation,
   ): Promise<string> {
     return await this.generateActionToken(payload, ActionTokenType.ACTIVATION);
+  }
+
+  public async generateForgotToken(
+    payload: JwtPayloadForgotType,
+  ): Promise<string> {
+    return await this.generateActionToken(payload, ActionTokenType.FORGOT);
   }
 
   private async generateToken(
@@ -109,6 +116,8 @@ export class TokenService {
     switch (type) {
       case ActionTokenType.ACTIVATION:
         return this.jwtConfig.activationTokenSecret;
+      case ActionTokenType.FORGOT:
+        return this.jwtConfig.forgotTokenSecret;
     }
   }
 
@@ -116,6 +125,8 @@ export class TokenService {
     switch (type) {
       case ActionTokenType.ACTIVATION:
         return this.jwtConfig.activationTokenExpiration;
+      case ActionTokenType.FORGOT:
+        return this.jwtConfig.forgotTokenExpiration;
     }
   }
 }

@@ -23,25 +23,33 @@ export class MailService {
     });
   }
 
-  public async sendWelcomeEmail(
-    email: string,
-    name: string,
-    activationToken: string,
-  ): Promise<void> {
+  public async compileTemplate(
+    templateName: string,
+    variables: any,
+  ): Promise<string> {
     const templatePath = path.join(
       process.cwd(),
       'src',
       'modules',
       'mail',
       'templates',
-      'welcome.hbs',
+      `${templateName}.hbs`,
     );
+
     const templateSource = fs.readFileSync(templatePath, 'utf-8');
     const template = handlebars.compile(templateSource);
 
+    return template(variables);
+  }
+
+  public async sendWelcomeEmail(
+    email: string,
+    name: string,
+    activationToken: string,
+  ): Promise<void> {
     const activationLink = `${this.mailConfig.mailUrl}/auth/activate/${activationToken}`;
 
-    const html = template({
+    const html = await this.compileTemplate('welcome', {
       name: name,
       year: new Date().getFullYear(),
       activationLink,
@@ -50,7 +58,28 @@ export class MailService {
     await this.transporter.sendMail({
       from: this.mailConfig.mailFrom,
       to: email,
-      subject: 'Ласкаво просимо',
+      subject: 'Welcome',
+      html,
+    });
+  }
+
+  public async sendForgotEmail(
+    email: string,
+    name: string,
+    forgotToken: string,
+  ): Promise<void> {
+    const forgotLink = `${this.mailConfig.mailUrl}/auth/forgotPassword/${forgotToken}`;
+
+    const html = await this.compileTemplate('forgot', {
+      name: name,
+      year: new Date().getFullYear(),
+      forgotLink,
+    });
+
+    await this.transporter.sendMail({
+      from: this.mailConfig.mailFrom,
+      to: email,
+      subject: 'Forgot Password',
       html,
     });
   }

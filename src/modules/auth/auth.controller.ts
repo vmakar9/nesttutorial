@@ -17,7 +17,9 @@ import { IUserData } from './interfaces/user-data.interface';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { TokenResponseDto } from './dto/response/token.response.dto';
 import { JwtAccessGuard } from './guards/jwt-access.guard';
-import { ChangePasswordRegusetDto } from './dto/request/change-password.reguset.dto';
+import { ChangePasswordReguestDto } from './dto/request/change-password.reguest.dto';
+import { ForgotPasswordRequestDto } from './dto/request/forgot-password.request.dto';
+import { ForgotEmailRequestDto } from './dto/request/forgot-email.request.dto';
 
 @ApiTags('Auth')
 @Controller({ path: 'auth', version: '1' })
@@ -71,12 +73,29 @@ export class AuthController {
   @Patch('changePassword')
   public async changePassword(
     @CurrentUser() userData: IUserData,
-    @Body() dto: ChangePasswordRegusetDto,
+    @Body() dto: ChangePasswordReguestDto,
   ): Promise<void> {
     await this.authService.changePassword(
       userData.userId,
       dto.oldPassword,
       dto.newPassword,
     );
+  }
+
+  @SkipAuth()
+  @Post('sendForgotEmail')
+  public async sendForgotEmail(
+    @Body() dto: ForgotEmailRequestDto,
+  ): Promise<void> {
+    await this.authService.sendForgotEmail(dto.email);
+  }
+
+  @SkipAuth()
+  @Patch('forgotPassword/:token')
+  public async changeForgotPassword(
+    @Param('token') token: string,
+    @Body() dto: ForgotPasswordRequestDto,
+  ): Promise<void> {
+    await this.authService.changeForgotPassword(token, dto.newPassword);
   }
 }
